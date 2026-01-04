@@ -3,8 +3,6 @@ provider "google" {
   region  = var.region
   zone    = var.zone
 
-  credentials = base64decode(var.google_credentials_base64)
-
 }
 
 data "google_compute_image" "ubuntu" {
