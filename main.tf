@@ -1,45 +1,53 @@
-provider "aws" {
-  region = "us-west-2"
+provider "google" {
+  project = var.project_id
+  region  = var.region
+  zone    = var.zone
 }
 
-data "aws_availability_zones" "available" {
-  state = "available"
+data "google_compute_image" "ubuntu" {
+  family  = "ubuntu-2404-lts-amd64"
+  project = "ubuntu-os-cloud"
 }
 
-data "aws_ami" "ubuntu" {
-  most_recent = true
+resource "google_compute_network" "vpc" {
+  name                    = "learn-hcp-terraform"
+  auto_create_subnetworks = false
+}
 
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*"]
+resource "google_compute_subnetwork" "private" {
+  name          = "private-subnet"
+  ip_cidr_range = "10.0.1.0/24"
+  region        = var.region
+  network       = google_compute_network.vpc.id
+}
+
+resource "google_compute_firewall" "ssh" {
+  name    = "allow-ssh"
+  network = google_compute_network.vpc.name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
   }
 
-  owners = ["099720109477"] # Canonical
+  source_ranges = ["0.0.0.0/0"]
 }
 
-module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "5.19.0"
+resource "google_compute_instance" "app_server" {
+  name         = var.instance_name
+  machine_type = var.instance_type
+  zone         = var.zone
 
-  name = "learn-hcp-terraform"
-  cidr = "10.0.0.0/16"
-
-  azs             = data.aws_availability_zones.available.names
-  private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
-  public_subnets  = ["10.0.101.0/24"]
-
-  enable_dns_hostnames = true
-}
-
-
-resource "aws_instance" "app_server" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = var.instance_type
-
-  vpc_security_group_ids = [module.vpc.default_security_group_id]
-  subnet_id              = module.vpc.private_subnets[0]
-
-  tags = {
-    Name = var.instance_name
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.ubuntu.self_link
+    }
   }
+
+  network_interface {
+    subnetwork = google_compute_subnetwork.private.id
+    # No access_config = private-only VM (no public IP)
+  }
+
+  tags = ["app-server"]
 }
