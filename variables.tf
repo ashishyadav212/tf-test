@@ -13,3 +13,7 @@ variable "instance_type" {
 variable "instance_name" {
   default = "app-server"
 }
+variable "GOOGLE_CREDENTIAL" {
+  type      = string
+  sensitive = true
+}
