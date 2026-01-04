@@ -1,11 +1,13 @@
-variable "instance_name" {
-  description = "Value of the EC2 instance's Name tag."
-  type        = string
-  default     = "learn-terraform"
+variable "project_id" {}
+variable "region" {
+  default = "us-west1"
 }
-
+variable "zone" {
+  default = "us-west1-a"
+}
 variable "instance_type" {
-  description = "The EC2 instance's type."
-  type        = string
-  default     = "t2.micro"
+  default = "e2-medium"
+}
+variable "instance_name" {
+  default = "app-server"
 }
