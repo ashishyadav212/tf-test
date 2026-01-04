@@ -12,3 +12,7 @@ output "instance_subnet" {
   description = "Subnetwork where the GCE instance is deployed."
   value       = google_compute_instance.app_server.network_interface[0].subnetwork
 }
+output "instance_id" {
+  description = "ID of GCE instace deployed"
+  value       = google_compute_instance.app_server.id
+}
