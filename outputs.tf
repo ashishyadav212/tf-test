@@ -1,12 +1,14 @@
-output "instance_hostname" {
-  description = "Private DNS name of the EC2 instance."
-  value       = aws_instance.app_server.private_dns
+output "instance_private_ip" {
+  description = "Private IP address of the GCE instance."
+  value       = google_compute_instance.app_server.network_interface[0].network_ip
 }
 
-output "instance_security_group_ids" {
-  value = aws_instance.app_server.vpc_security_group_ids
+output "instance_network_tags" {
+  description = "Network tags applied to the GCE instance (used by firewall rules)."
+  value       = google_compute_instance.app_server.tags
 }
 
 output "instance_subnet" {
-  value = aws_instance.app_server.subnet_id
+  description = "Subnetwork where the GCE instance is deployed."
+  value       = google_compute_instance.app_server.network_interface[0].subnetwork
 }
