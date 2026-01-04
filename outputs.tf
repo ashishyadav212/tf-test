@@ -14,5 +14,5 @@ output "instance_subnet" {
 }
 output "instance_id" {
   description = "ID of GCE instace deployed"
-  value       = google_compute_instance.app_server.id
+  value       = google_compute_instance.app_server.instance_id
 }
