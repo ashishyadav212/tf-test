@@ -1,4 +1,6 @@
-variable "project_id" {}
+variable "project_id" {
+  default = "gky100"
+}
 variable "region" {
   default = "us-west1"
 }
