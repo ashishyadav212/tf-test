@@ -13,3 +13,8 @@ variable "instance_type" {
 variable "instance_name" {
   default = "app-server"
 }
+variable "google_credentials_base64" {
+  description = "Base64-encoded GCP service account key"
+  type        = string
+  sensitive   = true
+}
