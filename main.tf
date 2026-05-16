@@ -126,7 +126,7 @@ module "allow_ilb_traffic" {
   name     = "allow-ilb-traffic"
   network  = google_compute_network.vpc.name
   protocol = "tcp"
-  ports    = ["80"]
+  ports    = ["800"]
   # Source ranges: VPC CIDR + Google Health Check Probers
   source_ranges = ["10.0.0.0/24", "130.211.0.0/22", "35.191.0.0/16"]
   target_tags   = ["http"]
@@ -895,7 +895,11 @@ resource "google_compute_instance" "for" {
     }
 
   }
+  dynamic "tags" {
+    for_each = var.tags
+    content {
+      items = tags.value
+    }
+    
+  }
 }
-
-
-
